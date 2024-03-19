@@ -19,23 +19,20 @@ window.fill(bg_color)
 
 hero = GameSprite(hero_img, window, 400, 300, 100, 100)
 
+zombies = pygame.sprite.Group()
+
+for i in range(1, 6):
+    zombie = Zombie("./img/windows_icon64.png", window, 300, 400, 100, 100)
+    zombies.add(zombie)
+
 is_running = True
-
-zombies = list()
-
-for i in range(random.randint(5, 10)):
-    zombie = Zombie(zombie_img, window, random.randint(0, 800), 300, 50, 70)
-    print(zombie, zombies)
-    zombies.append(zombie)
-    print(zombie, zombies)
 
 while is_running:
     # window.blit(window_icon,(0,0))
     hero.create()
 
-    for item in zombies:
-        item.create()
-
+    zombies.update()
+    zombies.draw(window)
     pygame.display.update()
 
     for event in pygame.event.get():

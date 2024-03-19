@@ -8,8 +8,8 @@ bullets = pygame.sprite.Group()
 class GameSprite(pygame.sprite.Sprite):
     def __init__(self, img, window, x=0, y=0, width=10, height=10, health=100):
         pygame.sprite.Sprite.__init__(self)
-        self.img = pygame.transform.scale(pygame.image.load(img), (width, height))
-        self.rect = self.img.get_rect()
+        self.image = pygame.transform.scale(pygame.image.load(img), (width, height))
+        self.rect = self.image.get_rect()
         self.rect.x = x
         self.rect.y = y
         self.width = width
@@ -18,7 +18,7 @@ class GameSprite(pygame.sprite.Sprite):
         self.window = window
 
     def create(self):
-        self.window.blit(self.img, (self.rect.x, self.rect.y))
+        self.window.blit(self.image, (self.rect.x, self.rect.y))
 
 
 class Bullet(GameSprite):
