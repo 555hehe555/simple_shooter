@@ -32,27 +32,39 @@ class GameSprite(pygame.sprite.Sprite):
 
 
 class Bullet(GameSprite):
-    ...
+    def update(self):
+        direction =
+        keys = pygame.key.get_pressed()
+        if keys[pygame.K_LEFT]:
+            self.rect.x -= 1
+        if keys[pygame.K_RIGHT]:
+            self.rect.x += 1
+
+        if keys[pygame.K_UP]:
+            self.rect.y -= 1
+        if keys[pygame.K_DOWN]:
+            self.rect.y += 1
 
 
 class Hero(GameSprite):
     def show_coords(self):
         return [self.rect.x, self.rect.y]
 
-    def fire(self):
-        bullet = Bullet("./img/window_icon128", self.rect.centerx, self.rect.centery, 20, 10, 1)
+    def fire(self, window):
+        bullet = Bullet("./img/muxu.png", window, self.rect.x, self.rect.y, 20, 10, 1)
         bullets.add(bullet)
+        return bullets
 
     def update(self):
         keys = pygame.key.get_pressed()
-        if keys[pygame.K_LEFT] and self.rect.x > 0:
+        if keys[pygame.K_a] and self.rect.x > 0:
             self.rect.x -= self.speed
-        if keys[pygame.K_RIGHT] and self.rect.x < SCREEN_WIDTH - self.width:
+        if keys[pygame.K_d] and self.rect.x < SCREEN_WIDTH - self.width:
             self.rect.x += self.speed
 
-        if keys[pygame.K_UP] and self.rect.y > 0:
+        if keys[pygame.K_w] and self.rect.y > 0:
             self.rect.y -= self.speed
-        if keys[pygame.K_DOWN] and self.rect.y < SCREEN_HEIGHT - self.height:
+        if keys[pygame.K_s] and self.rect.y < SCREEN_HEIGHT - self.height:
             self.rect.y += self.speed
 
 
