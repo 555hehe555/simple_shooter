@@ -33,7 +33,6 @@ class GameSprite(pygame.sprite.Sprite):
 
 class Bullet(GameSprite):
     def update(self):
-        direction =
         keys = pygame.key.get_pressed()
         if keys[pygame.K_LEFT]:
             self.rect.x -= 1

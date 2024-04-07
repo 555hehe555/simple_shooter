@@ -45,7 +45,7 @@ while is_running:
 
     for bullet in bullets:
         bullet.reset()
-        bullet.update(hero.show_coords())
+        bullet.update()
 
 
     zombies.update(hero.show_coords())
