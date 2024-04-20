@@ -1,4 +1,5 @@
 import pygame
+import random
 
 pygame.init()
 
@@ -8,7 +9,7 @@ SCREEN_WIDTH, SCREEN_HEIGHT = 960, 540
 
 
 class GameSprite(pygame.sprite.Sprite):
-    def __init__(self, img, window, x=0, y=0, width=10, height=10, health=100, speed=10, direction="up"):
+    def __init__(self, img, window, x=0, y=0, width=10, height=10, health=1, speed=10, direction="up", start_fire_coords=None):
         pygame.sprite.Sprite.__init__(self)
         self.image = pygame.transform.scale(pygame.image.load(img).convert_alpha(), (width, height))
         self.rect = self.image.get_rect()
@@ -20,6 +21,7 @@ class GameSprite(pygame.sprite.Sprite):
         self.window = window
         self.speed = speed
         self.direction = direction
+        self.start_fire_coords = start_fire_coords
 
     def reset(self):
         self.window.blit(self.image, (self.rect.x, self.rect.y))
@@ -33,31 +35,55 @@ class GameSprite(pygame.sprite.Sprite):
 
 
 class Bullet(GameSprite):
+    def current_hero_coords(self, hero_coords):
+        self.start_fire_coords = hero_coords
+
+    def cler_bullet(self):
+        self.kill()
+
     def update(self):
         if self.rect.x >= 850 or self.rect.x <= 100 \
                 or self.rect.y >= 440 or self.rect.y <= 100:
             self.kill()
 
         if self.direction == "right":
-            self.rect.x += 1
+            if self.rect.x - self.start_fire_coords[0] > 265:
+                self.rect.y += 0.5
+            if self.rect.x - self.start_fire_coords[0] > 300:
+                self.kill()
+            self.rect.x += 2
+
         if self.direction == "left":
-            self.rect.x -= 1
+            if self.start_fire_coords[0] - self.rect.x > 265:
+                self.rect.y += 0.5
+            if self.start_fire_coords[0] - self.rect.x > 300:
+                self.kill()
+            self.rect.x -= 2
+
         if self.direction == "up":
-            self.rect.y -= 1
+
+            if self.start_fire_coords[1] - self.rect.y > 110:
+                self.rect.x -= 1
+
+            if self.start_fire_coords[1] - self.rect.y > 150:
+                self.kill()
+            self.rect.y -= 2
+
         if self.direction == "down":
-            self.rect.y += 1
+            if self.rect.y - self.start_fire_coords[1] > 110:
+                self.rect.x -= 1
+            if self.rect.y - self.start_fire_coords[1] > 155:
+                self.kill()
+            self.rect.y += 2
 
 
 class Hero(GameSprite):
     def show_coords(self):
-        return [self.rect.x, self.rect.y]
+        return [self.rect.centerx, self.rect.centery]
 
     def fire(self, window, direction):
-        from main import start_bullet_coords
-        for coords in start_bullet_coords:
-            if coords[0]
 
-        bullet = Bullet("./img/bullet.png", window, self.rect.x, self.rect.y, 15, 15, 1, 12, direction)
+        bullet = Bullet("./img/bullet.png", window, self.rect.centerx, self.rect.centery, 15, 15, 1, 12, direction)
         bullets.add(bullet)
         return bullets
 
@@ -78,11 +104,11 @@ class Zombie(GameSprite):
     def update(self, hero_coord):
         if self.rect.x != hero_coord[0] or self.rect.y != hero_coord[1]:
             if self.rect.x > hero_coord[0]:
-                self.rect.x -= 1
-            elif self.rect.x < hero_coord[0]:
-                self.rect.x += 1
+                self.rect.x -= 1 - random.randint(-4, 3)
+            if self.rect.x < hero_coord[0]:
+                self.rect.x += 1 - random.randint(-4, 3)
 
             if self.rect.y > hero_coord[1]:
-                self.rect.y -= 1
-            elif self.rect.y < hero_coord[1]:
-                self.rect.y += 1
+                self.rect.y -= 1 - random.randint(-4, 3)
+            if self.rect.y < hero_coord[1]:
+                self.rect.y += 1 - random.randint(-4, 3)
