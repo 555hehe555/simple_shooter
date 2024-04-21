@@ -5,6 +5,7 @@ import time
 import random
 
 pygame.init()
+pygame.mixer.init()
 
 window_icon = pygame.image.load("./img/isaac.png")
 
@@ -17,8 +18,13 @@ window.fill(bg_color)
 
 bg_img = pygame.transform.scale(pygame.image.load("./img/bg.png").convert(), (SCREEN_WIDTH, SCREEN_HEIGHT))
 bg_no_img = pygame.transform.scale(pygame.image.load("./img/bg_no_doors.jpg").convert(), (SCREEN_WIDTH, SCREEN_HEIGHT))
-
 bg = bg_img
+
+bg_no_song = pygame.mixer.Sound("./sounds/bg_yes.wav")
+bg_yes_song = pygame.mixer.Sound("./sounds/bg_no.mp3")
+bg_song = None
+shoot_song = pygame.mixer.Sound("./sounds/shoot.mp3")
+hitting_song = pygame.mixer.Sound("./sounds/hitting.mp3")
 
 hero_img = "./img/isaac.png"
 zombie_img = "./img/muxu.png"
@@ -30,13 +36,11 @@ bullets = pygame.sprite.Group()
 
 
 def zombie_create():
-    for i in range(10):
+    for i in range(20):
         zombie = Zombie(zombie_img, window, random.randint(0, SCREEN_WIDTH - 100),
-                        random.randint(50, SCREEN_HEIGHT - 100), 25, 20)
+                        random.randint(100, SCREEN_HEIGHT - 100), 25, 20)
         zombies.add(zombie)
 
-
-zombie_create()
 
 is_running = True
 clock = pygame.time.Clock()
@@ -47,7 +51,7 @@ while is_running:
     window.blit(bg, (0, 0))
     hero.reset()
     hero.update()
-    print(hero.show_coords())
+
     if current_hero_coords:
         for bullet in bullets:
             bullet.current_hero_coords(current_hero_coords)
@@ -58,6 +62,14 @@ while is_running:
             bullet.update()
 
     if zombies:
+        if bg_song is None:
+            bg_song = bg_yes_song
+        if bg_song == bg_no_song:
+            bg_song.stop()
+            bg_song = bg_yes_song
+        if bg_song.get_num_channels() == 0:
+            bg_song.play()
+
         zombies.update(hero.show_coords())
 
         zombies.draw(window)
@@ -67,10 +79,17 @@ while is_running:
                 print(hero.health)
                 hero.health -= 0.5
 
-
         bg = bg_no_img
 
     if not zombies:
+        if bg_song is None:
+            bg_song = bg_no_song
+        if bg_song == bg_yes_song:
+            bg_song.stop()
+            bg_song = bg_no_song
+        if bg_song.get_num_channels() == 0:
+            bg_song.play()
+
         bg = bg_img
         if hero.show_coords()[0] >= 800 and \
                 200 <= hero.show_coords()[1] <= 250:
@@ -85,7 +104,7 @@ while is_running:
             for b in bullets:
                 b.cler_bullet()
 
-        elif hero.show_coords()[1] <= 50 and \
+        elif hero.show_coords()[1] <= 100 and \
                 400 <= hero.show_coords()[0] <= 500:
             hero.rect.y = 380
             zombie_create()
@@ -98,9 +117,10 @@ while is_running:
             for b in bullets:
                 b.cler_bullet()
 
-
     if zombies and bullets:
         collides = pygame.sprite.groupcollide(zombies, bullets, True, True)
+        if collides:
+            hitting_song.play()
 
     pygame.display.update()
 
@@ -113,17 +133,21 @@ while is_running:
             if event.key == pygame.K_RIGHT:
                 bullets = hero.fire(window, "right")
                 current_hero_coords = hero.show_coords()
+                shoot_song.play()
 
             if event.key == pygame.K_LEFT:
                 bullets = hero.fire(window, "left")
                 current_hero_coords = hero.show_coords()
+                shoot_song.play()
 
             if event.key == pygame.K_UP:
                 bullets = hero.fire(window, "up")
                 current_hero_coords = hero.show_coords()
+                shoot_song.play()
 
             if event.key == pygame.K_DOWN:
                 bullets = hero.fire(window, "down")
                 current_hero_coords = hero.show_coords()
+                shoot_song.play()
 
     clock.tick(60)

@@ -89,7 +89,7 @@ class Hero(GameSprite):
 
     def update(self):
         keys = pygame.key.get_pressed()
-        if keys[pygame.K_a] and self.rect.x > 100:
+        if keys[pygame.K_a] and self.rect.x > 70:
             self.rect.x -= self.speed
         if keys[pygame.K_d] and self.rect.x < SCREEN_WIDTH - self.width - 100:
             self.rect.x += self.speed
