@@ -52,14 +52,14 @@ class Bullet(GameSprite):
                 self.rect.y += 0.5
             if self.rect.x - self.start_fire_coords[0] > 300:
                 self.kill()
-            self.rect.x += 2
+            self.rect.x += 4
 
         if self.direction == "left":
             if self.start_fire_coords[0] - self.rect.x > 265:
                 self.rect.y += 0.5
             if self.start_fire_coords[0] - self.rect.x > 300:
                 self.kill()
-            self.rect.x -= 2
+            self.rect.x -= 4
 
         if self.direction == "up":
 
@@ -68,14 +68,14 @@ class Bullet(GameSprite):
 
             if self.start_fire_coords[1] - self.rect.y > 150:
                 self.kill()
-            self.rect.y -= 2
+            self.rect.y -= 4
 
         if self.direction == "down":
             if self.rect.y - self.start_fire_coords[1] > 110:
                 self.rect.x -= 1
             if self.rect.y - self.start_fire_coords[1] > 155:
                 self.kill()
-            self.rect.y += 2
+            self.rect.y += 4
 
 
 class Hero(GameSprite):
@@ -104,12 +104,12 @@ class Hero(GameSprite):
 class Zombie(GameSprite):
     def update(self, hero_coord):
         if self.rect.x != hero_coord[0] or self.rect.y != hero_coord[1]:
-            if self.rect.x > hero_coord[0]:
+            if self.rect.x >= hero_coord[0]:
                 self.rect.x -= 1 - random.randint(-4, 3)
-            if self.rect.x < hero_coord[0]:
+            if self.rect.x <= hero_coord[0]:
                 self.rect.x += 1 - random.randint(-4, 3)
 
-            if self.rect.y > hero_coord[1]:
+            if self.rect.y >= hero_coord[1]:
                 self.rect.y -= 1 - random.randint(-4, 3)
-            if self.rect.y < hero_coord[1]:
+            if self.rect.y <= hero_coord[1]:
                 self.rect.y += 1 - random.randint(-4, 3)

@@ -30,6 +30,8 @@ restart_img = pygame.transform.scale(pygame.image.load("./img/restart.png"), (32
 bg_img = pygame.transform.scale(pygame.image.load("./img/bg.png").convert(), (SCREEN_WIDTH, SCREEN_HEIGHT))
 bg_no_img = pygame.transform.scale(pygame.image.load("./img/bg_no_doors.jpg").convert(), (SCREEN_WIDTH, SCREEN_HEIGHT))
 bg = bg_img
+heart = pygame.transform.scale(pygame.image.load("./img/heart.png").convert_alpha(), (32,32))
+heart_broken = pygame.transform.scale(pygame.image.load("./img/broken_heart.png").convert_alpha(), (32,32))
 
 bg_no_song = pygame.mixer.Sound("./sounds/bg_no.wav")
 bg_yas_song = pygame.mixer.Sound("./sounds/bg.mp3")
@@ -45,6 +47,7 @@ bg_song = None
 shoot_song = pygame.mixer.Sound("./sounds/shoot.mp3")
 hitting_song = pygame.mixer.Sound("./sounds/hitting.mp3")
 timer_song = pygame.mixer.Sound("./sounds/sounds.mp3")
+timer_song.set_volume(0)
 
 hero_img = "./img/isaac.png"
 zombie_img = "./img/muxu.png"
@@ -56,7 +59,7 @@ bullets = pygame.sprite.Group()
 
 
 def zombie_create():
-    for i in range(20):
+    for i in range(random.randint(1,25)):
         zombie = Zombie(zombie_img, window, random.randint(0, SCREEN_WIDTH - 100),
                         random.randint(100, SCREEN_HEIGHT - 100), 25, 20)
         zombies.add(zombie)
@@ -111,6 +114,7 @@ def draw_restart_screen():
 game_over = False
 time = 0
 time_soot = 0
+rooms = 0
 
 while is_running:
     if timer_song.get_num_channels() == 0:
@@ -152,7 +156,6 @@ while is_running:
 
             for z in zombies:
                 if z.colliderect(hero.rect) and time > time_soot:
-                    print(hero.health)
                     hero.health -= 0.5
                     time_soot = time
                     if hero.health <= 0:
@@ -185,12 +188,14 @@ while is_running:
                     200 <= hero.show_coords()[1] <= 250:
                 hero.rect.x = 100
                 zombie_create()
+                rooms += 1
                 for b in bullets:
                     b.cler_bullet()
             elif hero.show_coords()[0] <= 100 and \
                     200 <= hero.show_coords()[1] <= 250:
                 hero.rect.x = 810
                 zombie_create()
+                rooms += 1
                 for b in bullets:
                     b.cler_bullet()
 
@@ -198,12 +203,14 @@ while is_running:
                     400 <= hero.show_coords()[0] <= 500:
                 hero.rect.y = 380
                 zombie_create()
+                rooms += 1
                 for b in bullets:
                     b.cler_bullet()
             elif hero.show_coords()[1] >= 380 and \
                     400 <= hero.show_coords()[0] <= 500:
                 hero.rect.y = 50
                 zombie_create()
+                rooms += 1
                 for b in bullets:
                     b.cler_bullet()
 
@@ -215,13 +222,16 @@ while is_running:
     if game_over:
         draw_restart_screen()
         keys = pygame.key.get_pressed()
+        bg_song.stop()
         if keys[pygame.K_SPACE]:
             hero.health = 3
             game_over = False
+            hero.rect.centerx, hero.rect.centery = SCREEN_WIDTH/2, SCREEN_HEIGHT/2
             for i in zombies:
                 i.kill()
 
     draw_text(str(hero.health), 24, (150, 150, 150), 30, 40)
+    draw_text(str(rooms), 24, (150, 150, 150), 30, 80)
 
     pygame.display.update()
 
