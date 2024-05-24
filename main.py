@@ -30,8 +30,9 @@ restart_img = pygame.transform.scale(pygame.image.load("./img/restart.png"), (32
 bg_img = pygame.transform.scale(pygame.image.load("./img/bg.png").convert(), (SCREEN_WIDTH, SCREEN_HEIGHT))
 bg_no_img = pygame.transform.scale(pygame.image.load("./img/bg_no_doors.jpg").convert(), (SCREEN_WIDTH, SCREEN_HEIGHT))
 bg = bg_img
-heart = pygame.transform.scale(pygame.image.load("./img/heart.png").convert_alpha(), (32,32))
-heart_broken = pygame.transform.scale(pygame.image.load("./img/broken_heart.png").convert_alpha(), (32,32))
+
+
+# hearts_list = [heart, heart, heart]
 
 bg_no_song = pygame.mixer.Sound("./sounds/bg_no.wav")
 bg_yas_song = pygame.mixer.Sound("./sounds/bg.mp3")
@@ -106,9 +107,39 @@ restart_btn = Picture(restart_img, (SCREEN_WIDTH // 2 - restart_img.get_width() 
 
 def draw_restart_screen():
     global restart_btn
-    draw_text("Game Over", 30, (83, 83, 83), SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2, align="center")
+    draw_text("Game Over", 30, (150,150,150), SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2, align="center")
     restart_btn.fill()
     restart_btn.draw()
+
+heart = pygame.transform.scale(pygame.image.load("./img/heart.png").convert_alpha(), (32,32))
+heart_broken = pygame.transform.scale(pygame.image.load("./img/broken_heart.png").convert_alpha(), (32,32))
+hearts_list = [heart,heart ,heart]
+
+def show_health(hero_health):
+    global heart, heart_broken, hearts_list
+
+    if hero_health == 3:
+        hearts_list = [heart,heart ,heart]
+
+    elif hero_health == 2.5:
+        hearts_list =  [heart, heart, heart_broken]
+    
+    elif hero_health == 2:
+        hearts_list =  [heart, heart]
+    
+    elif hero_health == 1.5:
+        hearts_list =  [heart, heart_broken]
+    
+    elif hero_health == 1:
+        hearts_list =  [heart]
+    
+    elif hero_health == 0.5:
+        hearts_list =  [heart_broken]
+
+    for index in range(len(hearts_list)):
+        a = 70 + index * 50
+        window.blit(hearts_list[index], (a, 40))
+
 
 
 game_over = False
@@ -123,9 +154,11 @@ while is_running:
 
     if not game_over:
         window.blit(bg, (0, 0))
+        show_health(hero.health)
+
         hero.reset()
         hero.update()
-
+        
         if current_hero_coords:
             for bullet in bullets:
                 bullet.current_hero_coords(current_hero_coords)
@@ -221,17 +254,24 @@ while is_running:
 
     if game_over:
         draw_restart_screen()
+
         keys = pygame.key.get_pressed()
         bg_song.stop()
         if keys[pygame.K_SPACE]:
             hero.health = 3
+            hearts_list = [heart, heart, heart]
             game_over = False
             hero.rect.centerx, hero.rect.centery = SCREEN_WIDTH/2, SCREEN_HEIGHT/2
             for i in zombies:
                 i.kill()
 
-    draw_text(str(hero.health), 24, (150, 150, 150), 30, 40)
-    draw_text(str(rooms), 24, (150, 150, 150), 30, 80)
+    # draw_text(str(hero.health), 24, (150, 150, 150), 30, 40)
+
+    if hero.health == 0:
+        rooms = 0
+
+    draw_text(f"rooms {str(rooms)}", 24, (150, 150, 150), 50, 80)
+    
 
     pygame.display.update()
 

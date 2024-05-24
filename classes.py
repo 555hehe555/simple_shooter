@@ -48,16 +48,16 @@ class Bullet(GameSprite):
             self.kill()
 
         if self.direction == "right":
-            if self.rect.x - self.start_fire_coords[0] > 265:
+            if self.rect.x - self.start_fire_coords[0] > 165:
                 self.rect.y += 0.5
-            if self.rect.x - self.start_fire_coords[0] > 300:
+            if self.rect.x - self.start_fire_coords[0] > 100:
                 self.kill()
             self.rect.x += 4
 
         if self.direction == "left":
-            if self.start_fire_coords[0] - self.rect.x > 265:
+            if self.start_fire_coords[0] - self.rect.x > 165:
                 self.rect.y += 0.5
-            if self.start_fire_coords[0] - self.rect.x > 300:
+            if self.start_fire_coords[0] - self.rect.x > 100:
                 self.kill()
             self.rect.x -= 4
 
